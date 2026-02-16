@@ -25,6 +25,42 @@ class DataTransformation:
         
     def get_data_transformer_object(self):
         try:
-            pass
-        except:
-            pass
+            num_columns = ["math_score", "writing_score"]
+            
+            categorical_columns = [
+                "gender",
+                "race_ethnicity",
+                "parental_level__of_education",
+                "lunch",
+                "test_preparation_course",
+            ]
+            
+            num_pipeline = Pipeline(
+                steps=[
+                    ("imputer", SimpleImputer(strategy="median")),
+                    ("scaler", StandardScaler())
+                ]
+            )
+            
+            categorical_pipeline = Pipeline(
+                steps=[
+                    ("imputer", SimpleImputer(strategy="most_frequent")),
+                    ("one_hot_encoding", OneHotEncoder()),
+                    ("scaler", StandardScaler())
+                ]
+            )
+            
+            logging.info("Numerical Scaling completed")
+            logging.info("Categorical Encoding and Scaling completed")
+            
+            
+            preprocessor  = ColumnTransformer(
+                [
+                    ("num_pipeline", num_pipeline, num_columns),
+                    ("categorical_pipeline", categorical_pipeline, categorical_columns)
+                ]
+            )
+            
+            return preprocessor
+        except Exception as e:
+            raise CustomException(e, sys)
