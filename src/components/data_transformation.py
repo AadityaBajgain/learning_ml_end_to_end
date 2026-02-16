@@ -64,3 +64,52 @@ class DataTransformation:
             return preprocessor
         except Exception as e:
             raise CustomException(e, sys)
+        
+    def initiate_data_transformation(self, train_path, test_path):
+        try:
+            train_set = pd.read_csv(train_path)
+            test_set = pd.read_csv(test_path)
+            
+            logging.info("Completed reading train and test data")
+            
+            target_column_name="math_score"
+            numerical_columns = ["writing_score", "reading_score"]
+            
+            logging.info("Obtaining preprocessing object")
+            
+            preprocessing_obj = self.get_data_transformer_object()
+            
+            input_train_feature_df = train_set.drop(target_column_name, axis=1)
+            input_train_target_df = train_set[target_column_name]
+            
+            
+            input_test_feature_df = test_set.drop(target_column_name, axis=1)
+            input_test_target_df = test_set[target_column_name]
+            
+            logging.info("Applying preprocessing object on train and test set")
+            
+            input_train_feature_arr = preprocessing_obj.fit_transform(input_train_feature_df)
+            input_test_feature_arr = preprocessing_obj.transform(input_test_feature_df)
+            
+            
+            train_arr = np.c_(input_train_feature_arr, np.array(input_train_feature_df))
+            
+            
+            test_arr = np.c_(input_test_feature_arr, np.array(input_test_feature_df))
+            
+            
+            logging.info("Saved preprocessing object")
+            
+            save_obj(
+                file_path = self.data_transformation_config.preprocessor_obj_file_path,
+                obj = preprocessing_obj()
+            )
+            
+            return(
+                train_arr,
+                test_arr,
+                self.data_transformation_config.preprocessor_obj_file_path
+            )
+            
+        except Exception as e:
+            raise CustomException(e, sys)
