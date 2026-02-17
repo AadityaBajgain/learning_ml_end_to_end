@@ -45,7 +45,7 @@ class DataTransformation:
             categorical_pipeline = Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="most_frequent")),
-                    ("one_hot_encoding", OneHotEncoder()),
+                    ("one_hot_encoding", OneHotEncoder(handle_unknown="ignore")),
                     ("scaler", StandardScaler(with_mean=False))
                 ]
             )
@@ -72,14 +72,14 @@ class DataTransformation:
             logging.info("Completed reading train and test data")
             
             target_column_name="math_score"
-            numerical_columns = ["writing_score", "reading_score"]
+            # numerical_columns = ["writing_score", "reading_score"]
             # print(train_set.drop(columns=[target_column_name], axis=1))
             
             logging.info("Obtaining preprocessing object")
             
             preprocessing_obj = self.get_data_transformer_object()
             
-            input_train_feature_df = train_set.drop(columns=[target_column_name], axis=1)
+            input_train_feature_df = train_set.drop(columns=[target_column_name])
             input_train_target_df = train_set[target_column_name]
             
             
