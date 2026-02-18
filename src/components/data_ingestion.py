@@ -8,6 +8,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 from src.components.data_transformation import DataTransformation, DataTransformationConfig
+from src.components.model_trainer import ModelTrainer
 
 @dataclass
 
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     
     data_transformation_obj = DataTransformation()
     preprocessor_obj = data_transformation_obj.get_data_transformer_object()
-    data_transformation_obj.initiate_data_transformation(train_path, test_path)
+    train_arr, test_arr, _ = data_transformation_obj.initiate_data_transformation(train_path, test_path)
     
+    model_trainer_obj = ModelTrainer()
     
+    print(model_trainer_obj.initiate_model_trainer(train_arr, test_arr))
